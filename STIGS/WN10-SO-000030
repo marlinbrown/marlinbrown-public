@@ -23,24 +23,36 @@
     PS C:\> .\STID-ID-WN10-SO-000030.ps1
 #>
 
-# Define the registry key and value
-$registryKeyPath = "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System"
-$registryValueName = "AuditPolicyOverride"
-$desiredValue = 1  # 1 to enable the policy
+# Define the registry path and value for the policy
+$registryKeyPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa"
+$registryValueName = "SCENoApplyLegacyAuditPolicy"
+$desiredValue = 1  # Set to 1 to enable the policy
 
-# Check if the registry key exists
-if (-not (Test-Path $registryKeyPath)) {
-    Write-Host "Registry key does not exist. Creating the key..."
-    # Create the registry path if it does not exist
-    New-Item -Path $registryKeyPath -Force
+# Function to set the registry value
+function Set-RegistryValue {
+    param (
+        [string]$keyPath,
+        [string]$valueName,
+        [int]$value
+    )
+
+    # Check if the registry key exists
+    if (-not (Test-Path $keyPath)) {
+        Write-Host "Registry key does not exist. Creating the key..."
+        # Create the registry path if it does not exist
+        New-Item -Path $keyPath -Force
+    }
+
+    # Set the registry value to the desired value
+    Write-Host "Setting registry value $valueName to $value..."
+    Set-ItemProperty -Path $keyPath -Name $valueName -Value $value -Type DWord
+
+    # Verify the change
+    $currentValue = Get-ItemProperty -Path $keyPath -Name $valueName
+    Write-Host "Registry value for $valueName is now set to: $($currentValue.$valueName)"
 }
 
-# Set the registry value to enable the policy
-Write-Host "Setting registry value to enable Force audit policy subcategory settings..."
-Set-ItemProperty -Path $registryKeyPath -Name $registryValueName -Value $desiredValue -Type DWord
+# Set the registry value for the specified path
+Set-RegistryValue -keyPath "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -valueName "SCENoApplyLegacyAuditPolicy" -value 1
 
-# Verify the change
-$currentValue = Get-ItemProperty -Path $registryKeyPath -Name $registryValueName
-Write-Host "Registry Value for $registryValueName is now set to: $($currentValue.$registryValueName)"
-
-Write-Host "Audit policy subcategory override has been enabled."
+Write-Host "Registry update completed successfully!"
