@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    This PowerShell script ensures that the Domain PIN for Windows 10 is disabled.
+    This PowerShell script ensures that the Audit policy using subcategories must be enabled.
 
 .NOTES
     Author          : Marlin Brown
@@ -11,7 +11,7 @@
     Version         : 1.0
     CVEs            : N/A
     Plugin IDs      : N/A
-    STIG-ID         : WN10-CC-000370
+    STIG-ID         : WN10-SO-000030
 
 .TESTED ON
     Date(s) Tested  : 
@@ -20,7 +20,7 @@
     PowerShell Ver. : 
 
 .USAGE
-    PS C:\> .\STID-ID-WN10-CC-000370.ps1
+    PS C:\> .\STID-ID-WN10-SO-000030.ps1
 #>
 
 # Define the registry key and value
