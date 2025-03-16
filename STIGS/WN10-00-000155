@@ -1,0 +1,30 @@
+
+# Disable Windows PowerShell 2.0 feature
+$featureName = "MicrosoftWindowsPowerShellV2"  # Feature name for PowerShell 2.0
+$featurePath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
+
+# Check if PowerShell 2.0 feature is enabled
+$ps2FeatureEnabled = Get-WindowsOptionalFeature -Online | Where-Object { $_.FeatureName -eq $featureName }
+
+# If PowerShell 2.0 is enabled, disable it
+if ($ps2FeatureEnabled.State -eq "Enabled") {
+    Write-Host "Disabling Windows PowerShell 2.0..."
+    Disable-WindowsOptionalFeature -Online -FeatureName $featureName -Remove
+    Write-Host "Windows PowerShell 2.0 has been disabled."
+} else {
+    Write-Host "Windows PowerShell 2.0 is already disabled."
+}
+
+# Check if the feature was successfully removed
+$ps2FeatureEnabled = Get-WindowsOptionalFeature -Online | Where-Object { $_.FeatureName -eq $featureName }
+if ($ps2FeatureEnabled.State -eq "Disabled") {
+    Write-Host "Windows PowerShell 2.0 is now disabled."
+} else {
+    Write-Host "Failed to disable Windows PowerShell 2.0."
+}
+
+# Optionally restart the system for the changes to take effect
+$restartSystem = Read-Host "Would you like to restart the system for changes to take effect? (Y/N)"
+if ($restartSystem -eq "Y") {
+    Restart-Computer -Force
+}
