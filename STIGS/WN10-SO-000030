@@ -1,0 +1,24 @@
+
+
+
+# Define the registry key and value
+$registryKeyPath = "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System"
+$registryValueName = "AuditPolicyOverride"
+$desiredValue = 1  # 1 to enable the policy
+
+# Check if the registry key exists
+if (-not (Test-Path $registryKeyPath)) {
+    Write-Host "Registry key does not exist. Creating the key..."
+    # Create the registry path if it does not exist
+    New-Item -Path $registryKeyPath -Force
+}
+
+# Set the registry value to enable the policy
+Write-Host "Setting registry value to enable Force audit policy subcategory settings..."
+Set-ItemProperty -Path $registryKeyPath -Name $registryValueName -Value $desiredValue -Type DWord
+
+# Verify the change
+$currentValue = Get-ItemProperty -Path $registryKeyPath -Name $registryValueName
+Write-Host "Registry Value for $registryValueName is now set to: $($currentValue.$registryValueName)"
+
+Write-Host "Audit policy subcategory override has been enabled."
