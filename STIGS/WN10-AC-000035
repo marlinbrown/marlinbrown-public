@@ -11,7 +11,7 @@
     Version         : 1.0
     CVEs            : N/A
     Plugin IDs      : N/A
-    STIG-ID         : WN10-00-000155
+    STIG-ID         : WN10-AC-000035
 
 .TESTED ON
     Date(s) Tested  : 
@@ -20,5 +20,29 @@
     PowerShell Ver. : 
 
 .USAGE
-    PS C:\> .\STID-ID-WN10-00-000155.ps1
+    PS C:\> .\STID-ID-WN10-AC-000035.ps1
 #>
+
+# Define the required minimum password length
+$minimumPasswordLength = 14
+
+# Set the minimum password length policy
+Write-Host "Setting the password policy for minimum length to $minimumPasswordLength characters..."
+
+# Using the Local Group Policy cmdlet to change the password policy
+$policyKeyPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
+
+# Set the registry value for minimum password length
+Set-ItemProperty -Path $policyKeyPath -Name "MinimumPasswordLength" -Value $minimumPasswordLength
+
+# Verify the new password policy setting
+$currentPolicyValue = Get-ItemProperty -Path $policyKeyPath -Name "MinimumPasswordLength"
+Write-Host "The minimum password length is now set to: $($currentPolicyValue.MinimumPasswordLength) characters."
+
+# Optionally prompt the user to restart for changes to take effect
+$restartSystem = Read-Host "Would you like to restart the system for changes to take effect? (Y/N)"
+if ($restartSystem -eq "Y") {
+    Restart-Computer -Force
+}
+
+Write-Host "Password policy update completed successfully!"
