@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    This PowerShell script ensures that the convenience PIN for Windows 10 is disabled.
+    This PowerShell script ensures that the Domain PIN for Windows 10 is disabled.
 
 .NOTES
     Author          : Marlin Brown
@@ -24,23 +24,23 @@
 #>
 
 # Define the registry key and value
-$registryKeyPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\PushNotifications"
-$registryValueName = "ShowInkWorkspaceOnHover"
-$desiredValue = 0  # 0 to disable Windows Ink Workspace
+$registryKeyPath = "HKLM:\Software\Policies\Microsoft\Windows\System"
+$registryValueName = "AllowDomainPINLogon"
+$desiredValue = 0  # 0 to disable domain PIN logon
 
 # Check if the registry key exists
-if (Test-Path $registryKeyPath) {
-    Write-Host "Registry key exists. Modifying the value..."
-} else {
+if (-not (Test-Path $registryKeyPath)) {
     Write-Host "Registry key does not exist. Creating the key..."
+    # Create the registry path if it does not exist
     New-Item -Path $registryKeyPath -Force
 }
 
-# Set the registry value to disable the Convenience Pen (Windows Ink Workspace)
-Set-ItemProperty -Path $registryKeyPath -Name $registryValueName -Value $desiredValue
+# Set the registry value to disable Domain PIN logon
+Write-Host "Setting registry value to disable Domain PIN logon..."
+Set-ItemProperty -Path $registryKeyPath -Name $registryValueName -Value $desiredValue -Type DWord
 
 # Verify the change
 $currentValue = Get-ItemProperty -Path $registryKeyPath -Name $registryValueName
-Write-Host "Registry Value for ShowInkWorkspaceOnHover is now set to: $($currentValue.$registryValueName)"
+Write-Host "Registry Value for $registryValueName is now set to: $($currentValue.$registryValueName)"
 
-Write-Host "Convenience Pen (Windows Ink Workspace) has been disabled."
+Write-Host "Domain PIN logon has been disabled."
