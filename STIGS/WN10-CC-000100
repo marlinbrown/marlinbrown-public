@@ -1,1 +1,58 @@
+<#
+.SYNOPSIS
+    This PowerShell script ensures that the Audit policy using subcategories must be enabled.
 
+.NOTES
+    Author          : Marlin Brown
+    LinkedIn        : linkedin.com/in/marlin-brown-085349274/
+    GitHub          : github.com/marlinbrown
+    Date Created    : 2025-16-03
+    Last Modified   : 2025-16-03
+    Version         : 1.0
+    CVEs            : N/A
+    Plugin IDs      : N/A
+    STIG-ID         : WN10-CC-000100
+
+.TESTED ON
+    Date(s) Tested  : 
+    Tested By       : 
+    Systems Tested  : 
+    PowerShell Ver. : 
+
+.USAGE
+    PS C:\> .\STID-ID-WN10-CC-000100.ps1
+#>
+
+# Define the registry key and value for the policy
+$registryKeyPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers"
+$registryValueName = "DisableWebPnPDownload"
+$desiredValue = 1  # Set to 1 to disable WebPnP download
+
+# Function to set the registry value
+function Set-RegistryValue {
+    param (
+        [string]$keyPath,
+        [string]$valueName,
+        [int]$value
+    )
+
+    # Check if the registry key exists
+    if (-not (Test-Path $keyPath)) {
+        Write-Host "Registry key does not exist. Creating the key..."
+        # Create the registry path if it does not exist
+        New-Item -Path $keyPath -Force
+    }
+
+    # Set the registry value to the desired value
+    Write-Host "Setting registry value $valueName to $value..."
+    Set-ItemProperty -Path $keyPath -Name $valueName -Value $value -Type DWord
+
+    # Verify the change
+    $currentValue = Get-ItemProperty -Path $keyPath -Name $valueName
+    Write-Host "Registry value for $valueName is now set to: $($currentValue.$valueName)"
+}
+
+# Set the registry value for the specified path
+Set-RegistryValue -keyPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers" -valueName "DisableWebPnPDownload" -value 1
+
+Write-Host "Registry update completed successfully!"
