@@ -22,3 +22,37 @@
 .USAGE
     PS C:\> .\STID-ID-WN10-AU-000505.ps1
 #>
+
+# Define the registry key and value for the policy
+$registryKeyPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Security"
+$registryValueName = "MaxSize"
+$desiredValue = 0x000FA000  # 1024000 bytes (greater than or equal to the specified value)
+
+# Function to set the registry value
+function Set-RegistryValue {
+    param (
+        [string]$keyPath,
+        [string]$valueName,
+        [int]$value
+    )
+
+    # Check if the registry key exists
+    if (-not (Test-Path $keyPath)) {
+        Write-Host "Registry key does not exist. Creating the key..."
+        # Create the registry path if it does not exist
+        New-Item -Path $keyPath -Force
+    }
+
+    # Set the registry value to the desired value
+    Write-Host "Setting registry value $valueName to $value..."
+    Set-ItemProperty -Path $keyPath -Name $valueName -Value $value -Type DWord
+
+    # Verify the change
+    $currentValue = Get-ItemProperty -Path $keyPath -Name $valueName
+    Write-Host "Registry value for $valueName is now set to: $($currentValue.$valueName)"
+}
+
+# Set the registry value for the specified path
+Set-RegistryValue -keyPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Security" -valueName "MaxSize" -value $desiredValue
+
+Write-Host "Registry update completed successfully!"
