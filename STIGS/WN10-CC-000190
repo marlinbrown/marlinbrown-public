@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    This PowerShell script ensures that the Windows PowerShell 2.0 feature is disabled on the system.
+    This PowerShell script ensures that Autoplay must be disabled for all drives.
 
 .NOTES
     Author          : Marlin Brown
