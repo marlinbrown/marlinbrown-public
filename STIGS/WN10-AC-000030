@@ -1,0 +1,13 @@
+
+
+# Set Minimum Password Age to 1 day
+$minimumPasswordAge = 1
+
+# Use net accounts to configure the minimum password age
+Write-Host "Setting Minimum Password Age to $minimumPasswordAge day(s)..."
+
+# Set the Minimum Password Age
+net accounts /minpwage:$minimumPasswordAge
+
+# Confirm the change
+Write-Host "Minimum Password Age has been set to $minimumPasswordAge day(s)."
