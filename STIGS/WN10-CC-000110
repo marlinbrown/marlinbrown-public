@@ -1,1 +1,25 @@
+# Define the registry path and the value name for disabling HTTP printing
+$registryPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers"
+$valueName = "DisableHTTPPrinting"
+$valueData = 1  # Setting this to 1 will disable HTTP printing
 
+# Check if the registry path exists
+if (-not (Test-Path -Path $registryPath)) {
+    Write-Host "The registry path does not exist. Creating path..."
+    # Create the registry path if it does not exist
+    New-Item -Path $registryPath -Force
+}
+
+# Set the registry value to disable HTTP printing
+Write-Host "Disabling HTTP printing by setting DisableHTTPPrinting to 1..."
+Set-ItemProperty -Path $registryPath -Name $valueName -Value $valueData
+
+# Verify the change
+$currentValue = (Get-ItemProperty -Path $registryPath -Name $valueName).$valueName
+Write-Host "HTTP Printing is set to: $currentValue (1 means disabled)"
+
+# Optionally, restart the Print Spooler service for changes to take effect
+Write-Host "Restarting the Print Spooler service to apply the changes..."
+Restart-Service -Name "Spooler" -Force
+
+Write-Host "HTTP Printing has been successfully disabled!"
