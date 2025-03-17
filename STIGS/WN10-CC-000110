@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    This PowerShell script ensures that Autoplay must be disabled for all drives.
+    This PowerShell script ensures that Printing over HTTP must be prevented.
 
 .NOTES
     Author          : Marlin Brown
