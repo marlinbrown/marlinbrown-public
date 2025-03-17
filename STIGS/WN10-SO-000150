@@ -1,0 +1,45 @@
+<#
+.SYNOPSIS
+    This PowerShell script ensures that the Anonymous enumeration of shares must be restricted.
+
+.NOTES
+    Author          : Marlin Brown
+    LinkedIn        : linkedin.com/in/marlin-brown-085349274/
+    GitHub          : github.com/marlinbrown
+    Date Created    : 2025-16-03
+    Last Modified   : 2025-16-03
+    Version         : 1.0
+    CVEs            : N/A
+    Plugin IDs      : N/A
+    STIG-ID         : WWN10-SO-000150
+
+.TESTED ON
+    Date(s) Tested  : 
+    Tested By       : 
+    Systems Tested  : 
+    PowerShell Ver. : 
+
+.USAGE
+    PS C:\> .\STID-ID-WN10-SO-000150.ps1
+#>
+
+# Define the registry path for restricting anonymous access
+$regPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa"
+
+# Check if the registry path exists, if not, create it
+if (-not (Test-Path $regPath)) {
+    Write-Host "Registry path does not exist. Creating the path..."
+    New-Item -Path $regPath -Force | Out-Null
+}
+
+# Set the value to restrict anonymous access
+Write-Host "Restricting Anonymous Access by setting 'RestrictAnonymous' to 1..."
+Set-ItemProperty -Path $regPath -Name "RestrictAnonymous" -Value 1 -Type DWord
+
+# Confirm the change
+Write-Host "Anonymous access has been restricted."
+
+# Force Group Policy Update to Apply the Change Immediately
+gpupdate /force
+Write-Host "Group Policy has been updated."
+
