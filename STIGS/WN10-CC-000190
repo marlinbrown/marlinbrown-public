@@ -1,0 +1,42 @@
+
+
+# Define the registry path for AutoPlay settings
+$registryPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer"
+
+# Check if the registry path exists, create it if it doesn't
+if (-not (Test-Path -Path $registryPath)) {
+    Write-Host "The registry path does not exist. Creating path..."
+    New-Item -Path $registryPath -Force
+}
+
+# Set 'NoDriveTypeAutoRun' to disable AutoPlay for all drives (0xFF)
+Write-Host "Disabling AutoPlay for all drives..."
+Set-ItemProperty -Path $registryPath -Name "NoDriveTypeAutoRun" -Value 255
+
+# Disable AutoPlay for removable drives and CDs
+$regKey = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer"
+$DisableAutoPlay = "DisableAutoplay"
+Set-ItemProperty -Path $regKey -Name $DisableAutoPlay -Value 1
+
+# Optional: Disable AutoPlay for all devices (by modifying global settings)
+$globalRegPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer"
+
+# Check if the global registry path exists, create it if it doesn't
+if (-not (Test-Path -Path $globalRegPath)) {
+    Write-Host "The global registry path does not exist. Creating path..."
+    New-Item -Path $globalRegPath -Force
+}
+
+# Set 'NoDriveTypeAutoRun' globally to disable AutoPlay for all drives
+Write-Host "Disabling global AutoPlay for all drives..."
+Set-ItemProperty -Path $globalRegPath -Name "NoDriveTypeAutoRun" -Value 255
+
+# Verify the settings
+Write-Host "Verifying the AutoPlay settings..."
+$NoDriveTypeAutoRun = (Get-ItemProperty -Path $registryPath -Name "NoDriveTypeAutoRun")."NoDriveTypeAutoRun"
+$DisableAutoplay = (Get-ItemProperty -Path $regKey -Name "DisableAutoplay")."DisableAutoplay"
+
+Write-Host "Current NoDriveTypeAutoRun value: $NoDriveTypeAutoRun (255 means disabled)"
+Write-Host "Current DisableAutoplay value: $DisableAutoplay (1 means disabled)"
+
+Write-Host "AutoPlay has been successfully disabled for all drives!"
