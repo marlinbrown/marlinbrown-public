@@ -1,0 +1,19 @@
+
+
+# Define the Group Policy path for Remote Assistance
+$regPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services"
+$regKey = "fAllowToGetHelp"
+
+# Check if the registry path exists
+if (-not (Test-Path $regPath)) {
+    Write-Host "Registry path does not exist. Creating the path..."
+    # Create the registry path if it doesn't exist
+    New-Item -Path $regPath -Force | Out-Null
+}
+
+# Set the registry key to disable Solicited Remote Assistance (0 = disabled)
+Write-Host "Disabling Solicited Remote Assistance..."
+Set-ItemProperty -Path $regPath -Name $regKey -Value 0 -Type DWord
+
+# Confirm the change
+Write-Host "Solicited Remote Assistance has been disabled."
