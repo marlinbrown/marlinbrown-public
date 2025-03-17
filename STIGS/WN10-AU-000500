@@ -1,0 +1,27 @@
+
+
+# Define the registry path for Application event log settings
+$regPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Application"
+
+# Check if the registry path exists, if not, create it
+if (-not (Test-Path $regPath)) {
+    Write-Host "Registry path does not exist. Creating the path..."
+    New-Item -Path $regPath -Force | Out-Null
+}
+
+# Define the desired log size in KB (32MB = 32768 KB)
+$desiredLogSizeKB = 32768
+
+# Set the Application event log size to the desired value
+Write-Host "Setting the Application event log size to $desiredLogSizeKB KB..."
+
+# Set the MaxSize registry value for the Application event log
+Set-ItemProperty -Path $regPath -Name "MaxSize" -Value $desiredLogSizeKB -Type DWord
+
+# Confirm the change
+Write-Host "Application event log size has been configured to $desiredLogSizeKB KB."
+
+# Optional: Force an update to the event log size
+wevtutil sl Application /ms:$desiredLogSizeKB
+
+Write-Host "Event log size updated. Please verify the change in Event Viewer."
