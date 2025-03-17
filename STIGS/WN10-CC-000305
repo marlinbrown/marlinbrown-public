@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    This PowerShell script ensures that the password history must be configured to 24 passwords remembered.
+    This PowerShell script ensures that the indexing of encrypted files must be turned off.
 
 .NOTES
     Author          : Marlin Brown
