@@ -1,0 +1,20 @@
+
+
+# Define the registry path and key
+$regPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Network Connections"
+$regKey = "NC_ShowSharedAccessUI"
+$regValue = 0
+
+# Check if the registry key exists
+if (-not (Test-Path $regPath)) {
+    Write-Host "Registry path does not exist. Creating the path..."
+    # Create the registry path if it doesn't exist
+    New-Item -Path $regPath -Force | Out-Null
+}
+
+# Set the registry key to disable the ICS UI
+Write-Host "Setting registry key to disable ICS UI..."
+Set-ItemProperty -Path $regPath -Name $regKey -Value $regValue -Type DWord
+
+# Confirm the change
+Write-Host "ICS UI has been disabled by setting the registry key $regKey to $regValue."
