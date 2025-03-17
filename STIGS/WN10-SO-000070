@@ -23,42 +23,30 @@
     PS C:\> .\STID-ID-WN10-SO-000070.ps1
 #>
 
-# Set the inactivity timeout to 15 minutes (900 seconds)
-$inactivityTimeout = 900
+# Set the registry path and value name
+$registryPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
+$valueName = "InactivityTimeoutSecs"
+$valueData = 900  # In seconds (900 seconds = 15 minutes)
 
-# Set the screensaver executable path (using the default "scrnsave.scr" which locks the system)
-$screensaverPath = "C:\Windows\System32\scrnsave.scr"
-
-# Set the registry to use the screensaver and lock the system
-Write-Host "Configuring inactivity timeout and screen lock settings..."
-
-# Set the screensaver timeout (15 minutes)
-Set-ItemProperty -Path "HKCU:\Control Panel\Desktop\" -Name ScreenSaveTimeOut -Value $inactivityTimeout
-
-# Enable screensaver to lock the system (ScreenSaverIsSecure = 1 locks the screen when the screensaver starts)
-Set-ItemProperty -Path "HKCU:\Control Panel\Desktop\" -Name ScreenSaverIsSecure -Value 1
-
-# Set the screensaver to the default lockable screensaver (scrnsave.scr)
-Set-ItemProperty -Path "HKCU:\Control Panel\Desktop\" -Name ScreenSaverExecutable -Value $screensaverPath
-
-# Verify if the settings were successfully applied
-$screenSaveTimeOut = (Get-ItemProperty -Path "HKCU:\Control Panel\Desktop\" -Name ScreenSaveTimeOut).ScreenSaveTimeOut
-$screenSaverIsSecure = (Get-ItemProperty -Path "HKCU:\Control Panel\Desktop\" -Name ScreenSaverIsSecure).ScreenSaverIsSecure
-
-Write-Host "Inactivity Timeout set to: $screenSaveTimeOut seconds"
-Write-Host "Screensaver is set to lock the screen: $screenSaverIsSecure"
-
-# Check if the settings were successfully configured
-if ($screenSaveTimeOut -eq $inactivityTimeout -and $screenSaverIsSecure -eq 1) {
-    Write-Host "The machine inactivity limit is set to 15 minutes, and the screen will lock after inactivity."
-} else {
-    Write-Host "Failed to configure the inactivity timeout or screensaver lock."
+# Check if the registry key exists
+if (-not (Test-Path -Path $registryPath)) {
+    Write-Host "The registry path does not exist. Creating path..."
+    # Create the registry key if it does not exist
+    New-Item -Path $registryPath -Force
 }
 
-# Optionally prompt the user to restart the system for changes to take effect
+# Set the registry value
+Write-Host "Configuring inactivity timeout to 900 seconds (15 minutes)..."
+Set-ItemProperty -Path $registryPath -Name $valueName -Value $valueData
+
+# Verify the registry setting
+$currentValue = (Get-ItemProperty -Path $registryPath -Name $valueName).$valueName
+Write-Host "Inactivity Timeout set to: $currentValue seconds"
+
+# Optionally, prompt to restart the computer to apply the changes
 $restartSystem = Read-Host "Would you like to restart the system for changes to take effect? (Y/N)"
 if ($restartSystem -eq "Y") {
     Restart-Computer -Force
 }
 
-Write-Host "Machine inactivity limit configuration completed successfully!"
+Write-Host "Inactivity timeout configuration completed successfully!"
