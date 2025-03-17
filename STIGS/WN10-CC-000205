@@ -1,0 +1,18 @@
+
+
+# Define the registry path for Windows Telemetry
+$regPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection"
+
+# Check if the registry path exists
+if (-not (Test-Path $regPath)) {
+    Write-Host "Registry path does not exist. Creating the path..."
+    # Create the registry path if it doesn't exist
+    New-Item -Path $regPath -Force | Out-Null
+}
+
+# Set Telemetry level to Basic (value 1)
+Write-Host "Configuring Windows Telemetry to Basic (Not Full)..."
+Set-ItemProperty -Path $regPath -Name "AllowTelemetry" -Value 1 -Type DWord
+
+# Confirm the change
+Write-Host "Windows Telemetry has been set to Basic (Not Full)."
