@@ -1,4 +1,27 @@
+<#
+.SYNOPSIS
+    This PowerShell script ensures that the password history must be configured to 24 passwords remembered.
 
+.NOTES
+    Author          : Marlin Brown
+    LinkedIn        : linkedin.com/in/marlin-brown-085349274/
+    GitHub          : github.com/marlinbrown
+    Date Created    : 2025-16-03
+    Last Modified   : 2025-16-03
+    Version         : 1.0
+    CVEs            : N/A
+    Plugin IDs      : N/A
+    STIG-ID         : WN10-AC-000020
+
+.TESTED ON
+    Date(s) Tested  : 
+    Tested By       : 
+    Systems Tested  : 
+    PowerShell Ver. : 
+
+.USAGE
+    PS C:\> .\STID-ID-WN10-AC-000020.ps1
+#>
 
 # Define the registry path for password policy
 $regPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\PasswordPolicies"
