@@ -23,41 +23,33 @@
     PS C:\> .\STID-ID-WN10-SO-000070.ps1
 #>
 
-# Set the Inactivity Timeout and Screensaver settings
-
-# Define the inactivity timeout in seconds (15 minutes = 900 seconds)
+# Set the inactivity timeout to 15 minutes (900 seconds)
 $inactivityTimeout = 900
 
-# Set the screensaver timeout (in seconds)
-$screenSaverTimeout = 900
+# Set the screensaver executable path (using the default "scrnsave.scr" which locks the system)
+$screensaverPath = "C:\Windows\System32\scrnsave.scr"
 
-# Set the screensaver to lock the system (using "scrnsave.scr" which is the default screensaver that locks the system)
-$screensaver = "C:\Windows\System32\scrnsave.scr"
+# Set the registry to use the screensaver and lock the system
+Write-Host "Configuring inactivity timeout and screen lock settings..."
 
-# Configure inactivity timeout for lock screen after 15 minutes (900 seconds)
-Write-Host "Configuring the machine inactivity limit to 15 minutes..."
-
-# Set the screensaver timeout value
-Set-ItemProperty -Path "HKCU:\Control Panel\Desktop\" -Name ScreenSaveTimeOut -Value $screenSaverTimeout
-
-# Enable the screensaver and set the lock screen behavior (1 is enabled, 0 is disabled)
-Set-ItemProperty -Path "HKCU:\Control Panel\Desktop\" -Name ScreenSaverIsSecure -Value 1
-
-# Set the screensaver path (ensure it uses the lockable screensaver)
-Set-ItemProperty -Path "HKCU:\Control Panel\Desktop\" -Name ScreenSaverExecutable -Value $screensaver
-
-# Apply the inactivity timeout for the lock screen (15 minutes)
+# Set the screensaver timeout (15 minutes)
 Set-ItemProperty -Path "HKCU:\Control Panel\Desktop\" -Name ScreenSaveTimeOut -Value $inactivityTimeout
 
-# Verify if the settings were applied
+# Enable screensaver to lock the system (ScreenSaverIsSecure = 1 locks the screen when the screensaver starts)
+Set-ItemProperty -Path "HKCU:\Control Panel\Desktop\" -Name ScreenSaverIsSecure -Value 1
+
+# Set the screensaver to the default lockable screensaver (scrnsave.scr)
+Set-ItemProperty -Path "HKCU:\Control Panel\Desktop\" -Name ScreenSaverExecutable -Value $screensaverPath
+
+# Verify if the settings were successfully applied
 $screenSaveTimeOut = (Get-ItemProperty -Path "HKCU:\Control Panel\Desktop\" -Name ScreenSaveTimeOut).ScreenSaveTimeOut
 $screenSaverIsSecure = (Get-ItemProperty -Path "HKCU:\Control Panel\Desktop\" -Name ScreenSaverIsSecure).ScreenSaverIsSecure
 
 Write-Host "Inactivity Timeout set to: $screenSaveTimeOut seconds"
 Write-Host "Screensaver is set to lock the screen: $screenSaverIsSecure"
 
-# Check if settings were successfully configured
-if ($screenSaveTimeOut -eq $screenSaverTimeout -and $screenSaverIsSecure -eq 1) {
+# Check if the settings were successfully configured
+if ($screenSaveTimeOut -eq $inactivityTimeout -and $screenSaverIsSecure -eq 1) {
     Write-Host "The machine inactivity limit is set to 15 minutes, and the screen will lock after inactivity."
 } else {
     Write-Host "Failed to configure the inactivity timeout or screensaver lock."
