@@ -23,21 +23,29 @@
     PS C:\> .\STID-ID-WN10-AC-000035.ps1
 #>
 
-# Define the required minimum password length
+# Set the minimum password length to 14 characters using the 'net accounts' command
 $minimumPasswordLength = 14
 
-# Set the minimum password length policy
-Write-Host "Setting the password policy for minimum length to $minimumPasswordLength characters..."
+# Set the minimum password length
+Write-Host "Setting the minimum password length to $minimumPasswordLength characters..."
+net accounts /minpwlen:$minimumPasswordLength
 
-# Using the Local Group Policy cmdlet to change the password policy
-$policyKeyPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
+# Verify the current minimum password length
+$currentMinPasswordLength = (net accounts | Select-String -Pattern "Minimum password length").ToString().Trim()
 
-# Set the registry value for minimum password length
-Set-ItemProperty -Path $policyKeyPath -Name "MinimumPasswordLength" -Value $minimumPasswordLength
+Write-Host "The current minimum password length is: $currentMinPasswordLength"
 
-# Verify the new password policy setting
-$currentPolicyValue = Get-ItemProperty -Path $policyKeyPath -Name "MinimumPasswordLength"
-Write-Host "The minimum password length is now set to: $($currentPolicyValue.MinimumPasswordLength) characters."
+# Ensure the setting has been correctly applied by checking the value
+if ($currentMinPasswordLength -match "Minimum password length\s+(\d+)") {
+    $currentLength = [int]$matches[1]
+    if ($currentLength -eq $minimumPasswordLength) {
+        Write-Host "Minimum password length is correctly set to $minimumPasswordLength."
+    } else {
+        Write-Host "Failed to set the minimum password length."
+    }
+} else {
+    Write-Host "Could not retrieve the minimum password length setting."
+}
 
 # Optionally prompt the user to restart for changes to take effect
 $restartSystem = Read-Host "Would you like to restart the system for changes to take effect? (Y/N)"
