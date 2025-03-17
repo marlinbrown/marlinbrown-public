@@ -1,0 +1,44 @@
+<#
+.SYNOPSIS
+    This PowerShell script ensures that the password history must be configured to 24 passwords remembered.
+
+.NOTES
+    Author          : Marlin Brown
+    LinkedIn        : linkedin.com/in/marlin-brown-085349274/
+    GitHub          : github.com/marlinbrown
+    Date Created    : 2025-16-03
+    Last Modified   : 2025-16-03
+    Version         : 1.0
+    CVEs            : N/A
+    Plugin IDs      : N/A
+    STIG-ID         : WN10-CC-000305
+
+.TESTED ON
+    Date(s) Tested  : 
+    Tested By       : 
+    Systems Tested  : 
+    PowerShell Ver. : 
+
+.USAGE
+    PS C:\> .\STID-ID-WN10-CC-000305.ps1
+#>
+
+# Define the registry path for Windows Search
+$regPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search"
+
+# Check if the registry path exists, and create it if not
+if (-not (Test-Path $regPath)) {
+    Write-Host "Registry path does not exist. Creating the path..."
+    New-Item -Path $regPath -Force | Out-Null
+}
+
+# Define the registry value for disabling indexing of encrypted files
+$registryValueName = "DisableIndexingEncryptedFiles"
+$registryValue = 1  # 1 means indexing of encrypted files is disabled
+
+# Set the registry value
+Write-Host "Disabling indexing of encrypted files by setting registry value..."
+Set-ItemProperty -Path $regPath -Name $registryValueName -Value $registryValue -Type DWord
+
+# Confirm the change
+Write-Host "Indexing of encrypted files has been disabled."
