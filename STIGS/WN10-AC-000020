@@ -41,5 +41,3 @@ Set-ItemProperty -Path $regPath -Name $regKey -Value $historyValue -Type DWord
 
 # Confirm the change
 Write-Host "Password History has been set to $historyValue passwords."
-
-gpupdate /force
