@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    This PowerShell script ensures that the Windows PowerShell 2.0 feature is disabled on the system.
+    This PowerShell script ensures that Passwords must, at a minimum, be 14 characters.
 
 .NOTES
     Author          : Marlin Brown
